@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>Library</OutputType>
+    <RootNamespace>HSUIKit</RootNamespace>
+    <AssemblyName>HSUIKit</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <LangVersion>5</LangVersion>
+
+    <HSDir Condition=" '$(HSDir)' == '' ">..\HoneySelect</HSDir>
+    <ManagedDir>$(HSDir)\StudioNEO_64_Data\Managed</ManagedDir>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <Optimize>false</Optimize>
+    <DebugType>portable</DebugType>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Only Unity and UGUI are referenced: the kit does not depend on the game. -->
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="UnityEngine">
+      <HintPath>$(ManagedDir)\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(ManagedDir)\UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Some installs ship a patched UnityEngine.UI that moves Text/InputField types into this assembly. -->
+  <ItemGroup Condition="Exists('$(ManagedDir)\UnityEngine.UI.Translation.dll')">
+    <Reference Include="UnityEngine.UI.Translation">
+      <HintPath>$(ManagedDir)\UnityEngine.UI.Translation.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="*.cs" />
+  </ItemGroup>
+
+  <Target Name="CopyToPlugins" AfterTargets="Build">
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(HSDir)\Plugins" ContinueOnError="true" />
+  </Target>
+
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
